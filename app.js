@@ -30,10 +30,9 @@ app.use(AuthUser);
 app.use(cookieParser('nany is cool'));
 app.use(session({
   secret: 'keyboard cat',
-  resave: true,
+  resave: false,
   saveUninitialized: true
-  //cookie: { secure: true }
-}));
+}))
 
 
 // Store "session" information.  To see how to store sessions in a cookie, check out
@@ -77,7 +76,7 @@ app.get('/new', function(request, response) {
     response.render('new', {});
 });
 
-app.get('/', session, function(req, res){
+app.get('/', function(req, res){
 //    req.session.count = req.session.count || 0;
 //    var n = req.session.count++;
     
@@ -91,9 +90,9 @@ app.get('/', session, function(req, res){
     }
     
     //session 
-//    req.session.name2 = req.session.name2 || new Date().toUTCString();
-//    console.log(req.sessionI);
-//    console.log(req.session.name2);
+    req.session.name2 = req.session.name2 || new Date().toUTCString();
+    
+    console.log(req.session.name2);
         
     
     // TODO: How do we get a list of all model objects using a mongoose model?
@@ -103,7 +102,8 @@ app.get('/', session, function(req, res){
         }
         else {
             res.render('index', {
-                posts:posts
+                posts:posts,
+                name: req.session.name2
             });
         }
     });
