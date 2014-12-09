@@ -17,12 +17,15 @@
         </div>
         <div class="row">
             <div class="span12">
-                <form action="/create" method="POST">
+                <form action="/create" method="POST" enctype="multipart/form-data">
                     <label>Post Title</label>
                     <input type="text" name="title" placeholder="Type a title..."/>
 
                     <label>Post Content</label>
                     <textarea name="content" rows="5"></textarea>
+                    <label>Post Banner</label>
+                    <input type="file" name="picture"  id="picture" />
+                    
                     <p>
                         <button type="submit" class="btn">Submit</button>
                     </p>

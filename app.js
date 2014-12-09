@@ -4,8 +4,10 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     session = require('express-session'),
+    multer  = require('multer'),
     Post = require('./post');
 var app = express();
+var fileUploadDone=false;
 
 function AuthUser(req, res, next){
     var user = {
@@ -21,8 +23,11 @@ function AuthUser(req, res, next){
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.use(require('body-parser').json());
+
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+//app.use(bodyParser({ keepExtensions: true, uploadDir: path.join(__dirname, '/uploads'), extended: false}));
+
 //app.use(express.methodOverride());
 //app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
@@ -32,7 +37,22 @@ app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true
-}))
+}));
+
+/*Configure the multer.*/
+
+app.use(multer({ dest: './uploads/',
+ rename: function (fieldname, filename) {
+    return filename+Date.now();
+  },
+onFileUploadStart: function (file) {
+  console.log(file.originalname + ' is starting ...')
+},
+onFileUploadComplete: function (file) {
+  console.log(file.fieldname + ' uploaded to  ' + file.path)
+  fileUploadDone=true;
+}
+}));
 
 
 // Store "session" information.  To see how to store sessions in a cookie, check out
@@ -93,7 +113,16 @@ app.get('/', function(req, res){
     req.session.name2 = req.session.name2 || new Date().toUTCString();
     
     console.log(req.session.name2);
-        
+    
+    //file upload status 
+    if(fileUploadDone==true){
+        //console.dir(res);
+        console.log("File uploaded.");
+        //console.log(req.files.picture.path);
+        //console.log(req.files.picture.path);
+        //console.dir(req.files.picture);
+    }
+    
     
     // TODO: How do we get a list of all model objects using a mongoose model?
     Post.find(function(err, posts) {
